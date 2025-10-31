@@ -131,12 +131,17 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Patch environment for ROCm (installs Flash Attention, etc.)
-late patch --arch gfx942  # Replace with your GPU architecture
+late patch amd --arch gfx942  # Replace with your GPU architecture
+
 ```
 
 ### 2️⃣ Run Your First Training
 
 ```bash
+
+# Download the sample dataset
+git clone git@hf.co:datasets/mlabonne/FineTome-100k
+
 # Create a simple LoRA training config
 cat > quick_lora.yml << EOF
 base_model: "meta-llama/Llama-3.2-3B-Instruct"
