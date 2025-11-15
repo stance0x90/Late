@@ -117,7 +117,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Set HF Token from config or environment
-hf_token = "{config.get('hf_token', '')}" or os.environ.get('HF_TOKEN')
+hf_token = config.get('hf_token', '') or os.environ.get('HF_TOKEN')
 if hf_token:
     os.environ['HF_TOKEN'] = hf_token
 else:
@@ -126,12 +126,12 @@ else:
 
 # Detect available hardware
 if torch.cuda.is_available():
-    device_name = torch.cuda.get_device_name(0)
+    device_name = torch.cuda.get_device_name('cuda')
     if hasattr(torch.version, 'hip') and torch.version.hip and 'rocm' in torch.version.hip:
-        logger.info(f"[OK] Detected AMD ROCm GPU: {{device_name}}")
+        logger.info(f"[OK] Detected AMD ROCm GPU: {{{device_name}}}")
         device_type = "rocm"
     else:
-        logger.info(f"[OK] Detected NVIDIA CUDA GPU: {device_name}")
+        logger.info(f"[OK] Detected NVIDIA CUDA GPU: {{{device_name}}}")
         device_type = "cuda"
 else:
     logger.info("[INFO] No GPU detected. Running on CPU. Training will be slower.")
@@ -151,11 +151,11 @@ def send_ntfy(message, title="Late Trainer"):
         return
     try:
         requests.post(
-            f"https://ntfy.sh/{ntfy_topic}",
+            f"https://ntfy.sh/{{ntfy_topic}}",
             data=message.encode('utf-8'),
             headers={"Title": title, "Priority": "default", "Tags": "rocket"}
         )
-        logger.info(f"[INFO] Notification sent to ntfy topic: {ntfy_topic}")
+        logger.info(f"[INFO] Notification sent to ntfy topic: {{ntfy_topic}}")
     except Exception as e:
         logger.error(f"[WARN] Failed to send ntfy notification: {e}")
 
